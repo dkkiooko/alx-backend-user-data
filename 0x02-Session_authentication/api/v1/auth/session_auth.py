@@ -1,7 +1,9 @@
 #!/usr/bin/env python3
 """session authentication mechanism
 """
+from typing import TypeVar
 from api.v1.auth.auth import Auth
+from api.v1.views.users import User
 from uuid import uuid4
 
 
@@ -40,3 +42,11 @@ class SessionAuth(Auth):
         if not isinstance(session_id, str):
             return None
         return self.user_id_by_session_id.get(session_id, None)
+
+    def current_user(self, request=None) -> TypeVar('User'):
+        """overloads from Auth
+        Returns: User instance based on cookie value
+        """
+        session_id = self.session_cookie(request)
+        user_id_for_session = self.user_id_for_session_id(session_id)
+        return User.get(user_id_for_session)
