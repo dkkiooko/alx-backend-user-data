@@ -13,12 +13,17 @@ def login():
     captures all credentials for session authentication
     """
     email = request.form.get('email')
-    password = request.form.get('password')
     if not email:
         return jsonify({"error": "email missing"}), 400
+
+    password = request.form.get('password')
     if not password:
         return jsonify({"error": "password missing"}), 400
-    found_users = User.search({'email': email})
+
+    try:
+        found_users = User.search({'email': email})
+    except Exception:
+        return jsonify({"error": "no user found for this email"}), 404
     if not found_users:
         return jsonify({"error": "no user found for this email"}), 404
 
