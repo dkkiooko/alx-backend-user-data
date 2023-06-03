@@ -13,29 +13,23 @@ def login():
     captures all credentials for session authentication
     """
     email = request.form.get('email')
-    if not email:
+    if email is None or email == '':
         return jsonify({"error": "email missing"}), 400
 
     password = request.form.get('password')
-    if not password:
+    if password is None or password == '':
         return jsonify({"error": "password missing"}), 400
 
-    try:
-        found_users = User.search({'email': email})
-    except Exception:
-        return jsonify({"error": "no user found for this email"}), 404
-    if not found_users:
+    found_users = User.search({"email": email})
+    if not found_users or found_users == []:
         return jsonify({"error": "no user found for this email"}), 404
 
     for user in found_users:
-        if not user.is_valid_password(password):
-            return jsonify({"error": "wrong password"}), 404
-
-    from api.v1.app import auth
-    found_user = found_users[0]
-    session_id = auth.create_session(found_user.id)
-    SESSION_NAME = getenv('SESSION_NAME')
-
-    response = jsonify(found_user.to_json())
-    response.set_cookie(SESSION_NAME, session_id)
-    return response
+        if user.is_valid_password(password):
+            from api.v1.app import auth
+            session_id = auth.create_session(user.id)
+            resp = jsonify(user.to_json())
+            session_name = getenv('SESSION_NAME')
+            resp.set_cookie(session_name, session_id)
+            return resp
+    return jsonify({"error": "wrong password"}), 401
