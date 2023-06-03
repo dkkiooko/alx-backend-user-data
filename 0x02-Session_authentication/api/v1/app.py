@@ -7,6 +7,7 @@ from api.v1.views import app_views
 from api.v1.auth.auth import Auth
 from api.v1.auth import basic_auth
 from api.v1.auth import session_auth
+from api.v1.auth import session_db_auth
 from api.v1.auth import session_exp_auth
 from flask import Flask, jsonify, abort, request
 from flask_cors import (CORS, cross_origin)
@@ -27,6 +28,8 @@ elif AUTH_TYPE == "session_auth":
     auth = session_auth.SessionAuth()
 elif AUTH_TYPE == "session_exp_auth":
     auth = session_exp_auth.SessionExpAuth()
+elif AUTH_TYPE == "session_db_auth":
+    auth = session_db_auth.SessionDBAuth()
 
 
 @app.errorhandler(404)
