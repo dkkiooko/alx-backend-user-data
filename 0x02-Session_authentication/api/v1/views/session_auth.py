@@ -30,12 +30,12 @@ def login():
     for user in found_users:
         if not user.is_valid_password(password):
             return jsonify({"error": "wrong password"}), 404
-    found_user = found_users[0]
 
     from api.v1.app import auth
+    found_user = found_users[0]
     session_id = auth.create_session(found_user.id)
-    SESSION_COOKIE = getenv('SESSION_NAME')
+    SESSION_NAME = getenv('SESSION_NAME')
 
     response = jsonify(found_user.to_json())
-    response.set_cookie(SESSION_COOKIE, session_id)
+    response.set_cookie(SESSION_NAME, session_id)
     return response
