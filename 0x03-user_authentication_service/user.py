@@ -3,8 +3,6 @@
 """
 from sqlalchemy import Column, Integer, String
 from sqlalchemy.ext.declarative import declarative_base
-
-
 Base = declarative_base()
 
 
@@ -15,7 +13,6 @@ class User(Base):
         Base (_sqlalchemy_): _class with directives to describe table in sql_
     """
     __tablename__ = 'users'
-
 
     id = Column(Integer, primary_key=True)
     email = Column(String(250), nullable=False)
