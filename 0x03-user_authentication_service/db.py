@@ -57,17 +57,11 @@ class DB:
         raises error when no results are found or invalid args are passed
         returns first row found in the `users` table
         """
-        if not kwargs:
-            raise InvalidRequestError()
-
-        column_names = User.__table__.columns.keys()
-        for key in kwargs.keys():
-            if key not in column_names:
-                raise InvalidRequestError()
-
-        user = self._session.query(User).filter_by(**kwargs).one()
-
-        if user is None:
+        session = self._session
+        try:
+            user = session.query(User).filter_by(**kwargs).one()
+        except NoResultFound:
             raise NoResultFound()
-
+        except InvalidRequestError:
+            raise InvalidRequestError()
         return user
