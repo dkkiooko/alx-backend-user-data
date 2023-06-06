@@ -53,12 +53,15 @@ class DB:
         return new_user
 
     def find_user_by(self, **kwargs: Dict[str, str]) -> User:
-        """ find first row found in users table matching kwarg argument """
+        """ find first row found in users table matching kwarg argument
+        raises error when no results are found or invalid args are passed
+        returns first row found in the `users` table
+        """
         session = self._session
         try:
             user = session.query(User).filter_by(**kwargs).one()
         except NoResultFound:
-            raise NoResultFound()
+            raise NoResultFound
         except InvalidRequestError:
-            raise InvalidRequestError()
+            raise InvalidRequestError
         return user
